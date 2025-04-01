@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import RestaurantHeader from "@/components/restaurants/RestaurantHeader";
 import MenuSection from "@/components/restaurants/MenuSection";
+import ReservationForm from "@/components/restaurants/ReservationForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -164,6 +165,7 @@ const beverageItems = [
 const RestaurantDetail = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [cartItems, setCartItems] = useState(2);
+  const [activeTab, setActiveTab] = useState("menu");
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -199,77 +201,125 @@ const RestaurantDetail = () => {
             </div>
           </div>
           
-          <Tabs defaultValue="recommended" className="flex gap-6">
-            <div className="hidden lg:block w-1/4">
-              <ScrollArea className="h-[600px] pr-4">
-                <TabsList className="flex flex-col w-full bg-transparent h-auto">
-                  {menuCategories.map((category) => (
-                    <TabsTrigger
-                      key={category.id}
-                      value={category.id}
-                      className="justify-start py-3 px-4 text-left data-[state=active]:bg-gray-100 data-[state=active]:text-culinary"
-                    >
-                      {category.title}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
-              </ScrollArea>
+          <div className="mb-6">
+            <TabsList className="w-full max-w-md">
+              <TabsTrigger 
+                className="flex-1" 
+                value="menu" 
+                onClick={() => setActiveTab("menu")}
+                data-state={activeTab === "menu" ? "active" : ""}
+              >
+                Menu
+              </TabsTrigger>
+              <TabsTrigger 
+                className="flex-1" 
+                value="reservation" 
+                onClick={() => setActiveTab("reservation")}
+                data-state={activeTab === "reservation" ? "active" : ""}
+              >
+                Book a Table
+              </TabsTrigger>
+              <TabsTrigger 
+                className="flex-1" 
+                value="reviews" 
+                onClick={() => setActiveTab("reviews")}
+                data-state={activeTab === "reviews" ? "active" : ""}
+              >
+                Reviews
+              </TabsTrigger>
+            </TabsList>
+          </div>
+          
+          {activeTab === "menu" && (
+            <div className="flex gap-6">
+              <div className="hidden lg:block w-1/4">
+                <ScrollArea className="h-[600px] pr-4">
+                  <TabsList className="flex flex-col w-full bg-transparent h-auto">
+                    {menuCategories.map((category) => (
+                      <TabsTrigger
+                        key={category.id}
+                        value={category.id}
+                        className="justify-start py-3 px-4 text-left data-[state=active]:bg-gray-100 data-[state=active]:text-culinary"
+                      >
+                        {category.title}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                </ScrollArea>
+              </div>
+              
+              <div className="w-full lg:w-3/4 border-l pl-6">
+                <Tabs defaultValue="recommended">
+                  <TabsContent value="recommended">
+                    <MenuSection
+                      title="Recommended"
+                      description="The most ordered items and dishes from this restaurant"
+                      items={recommendedItems}
+                    />
+                  </TabsContent>
+                  
+                  <TabsContent value="starters">
+                    <MenuSection
+                      title="Starters & Appetizers"
+                      items={starterItems}
+                    />
+                  </TabsContent>
+                  
+                  <TabsContent value="main-course">
+                    <MenuSection
+                      title="Main Course"
+                      items={mainCourseItems}
+                    />
+                  </TabsContent>
+                  
+                  <TabsContent value="desserts">
+                    <MenuSection
+                      title="Desserts"
+                      items={dessertItems}
+                    />
+                  </TabsContent>
+                  
+                  <TabsContent value="beverages">
+                    <MenuSection
+                      title="Beverages"
+                      items={beverageItems}
+                    />
+                  </TabsContent>
+                </Tabs>
+              </div>
             </div>
-            
-            <div className="w-full lg:w-3/4 border-l pl-6">
-              <TabsContent value="recommended">
-                <MenuSection
-                  title="Recommended"
-                  description="The most ordered items and dishes from this restaurant"
-                  items={recommendedItems}
-                />
-              </TabsContent>
-              
-              <TabsContent value="starters">
-                <MenuSection
-                  title="Starters & Appetizers"
-                  items={starterItems}
-                />
-              </TabsContent>
-              
-              <TabsContent value="main-course">
-                <MenuSection
-                  title="Main Course"
-                  items={mainCourseItems}
-                />
-              </TabsContent>
-              
-              <TabsContent value="desserts">
-                <MenuSection
-                  title="Desserts"
-                  items={dessertItems}
-                />
-              </TabsContent>
-              
-              <TabsContent value="beverages">
-                <MenuSection
-                  title="Beverages"
-                  items={beverageItems}
-                />
-              </TabsContent>
+          )}
+          
+          {activeTab === "reservation" && (
+            <div className="max-w-md mx-auto">
+              <ReservationForm restaurantName={restaurant.name} />
             </div>
-          </Tabs>
+          )}
+          
+          {activeTab === "reviews" && (
+            <div className="border rounded-lg p-6 bg-white">
+              <h3 className="text-xl font-bold mb-4">Customer Reviews</h3>
+              <p className="text-gray-500">Reviews coming soon...</p>
+            </div>
+          )}
         </div>
       </main>
       
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg py-3 px-4">
-        <div className="container max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <span className="font-medium">{cartItems} Items</span>
-            <span className="mx-2">|</span>
-            <span className="font-medium">$42.98</span>
+      {activeTab === "menu" && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg py-3 px-4">
+          <div className="container max-w-7xl mx-auto flex items-center justify-between">
+            <div>
+              <span className="font-medium">{cartItems} Items</span>
+              <span className="mx-2">|</span>
+              <span className="font-medium">$42.98</span>
+            </div>
+            <Button className="bg-culinary hover:bg-culinary-dark">
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              View Cart
+            </Button>
           </div>
-          <Button className="bg-culinary hover:bg-culinary-dark">
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            View Cart
-          </Button>
         </div>
-      </div>
+      )}
 
       <Footer />
     </div>

@@ -1,4 +1,3 @@
-
 import { Search, ShoppingCart, User, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -15,6 +14,7 @@ const Navbar = () => {
     { name: "Restaurants", path: "/restaurants" },
     { name: "Cuisines", path: "/cuisines" },
     { name: "Offers", path: "/offers" },
+    { name: "About Us", path: "/about" },
   ];
 
   return (
